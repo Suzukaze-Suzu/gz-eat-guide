@@ -1,0 +1,1526 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f1e6">
+<title>广州 · 吃好一点</title>
+<style>
+:root{
+  --paper:#f7f1e6; --paper2:#efe6d6; --card:#fffdf8; --ink:#241d19; --ink2:#54483e;
+  --muted:#8d7f72; --line:#e7d9c4; --line2:#f0e6d6;
+  --brand:#c2410c; --brand-soft:#fdeee5; --teal:#0f766e; --teal-soft:#e6f2f0; --gold:#b7791f;
+  --navh:calc(56px + env(safe-area-inset-bottom));
+  --safe-b:env(safe-area-inset-bottom);
+  --shadow:0 1px 2px rgba(70,50,30,.05), 0 8px 24px rgba(70,50,30,.06);
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{color-scheme:light}
+html,body{margin:0;height:100%}
+body{
+  background:var(--paper); color:var(--ink);
+  font:15px/1.62 -apple-system,BlinkMacSystemFont,"PingFang SC","HarmonyOS Sans SC","Source Han Sans SC","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased; overscroll-behavior-y:none;
+}
+h1,h2,h3,p,ul{margin:0}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+
+/* ---------- panes ---------- */
+#panes{position:fixed;left:0;right:0;top:0;bottom:var(--navh)}
+.pane{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;padding-bottom:28px}
+.pane.on{display:block}
+#pane-map{padding-bottom:0;overflow:hidden}
+
+/* ---------- hero ---------- */
+.hero{padding:calc(20px + env(safe-area-inset-top)) 22px 18px;position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;inset:0;background:
+  radial-gradient(120% 80% at 100% 0%,rgba(194,65,12,.10),transparent 60%),
+  radial-gradient(90% 70% at 0% 10%,rgba(15,118,110,.08),transparent 55%);pointer-events:none}
+.hero>*{position:relative}
+.kicker{font-size:11.5px;letter-spacing:.18em;color:var(--brand);font-weight:600;text-transform:uppercase}
+h1{font-size:31px;line-height:1.15;font-weight:800;letter-spacing:.01em;margin-top:9px;text-wrap:balance}
+h1 em{font-style:normal;color:var(--brand)}
+.rule{width:52px;height:3px;border-radius:2px;background:var(--brand);margin:12px 0 12px}
+.lede{font-size:14px;color:var(--ink2);max-width:23em}
+.hero-meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-top:13px;font-size:12.5px;color:var(--muted)}
+.hero-meta .pill{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--ink2);font-weight:600}
+.hero-meta .pill.hot{background:var(--brand-soft);border-color:#f3c6ae;color:var(--brand)}
+
+/* ---------- sections ---------- */
+.wrap{padding:0 16px}
+.sec-h{display:flex;align-items:baseline;gap:9px;margin:22px 6px 11px}
+.sec-h h2{font-size:18.5px;font-weight:750;letter-spacing:.01em}
+.sec-h .sub{font-size:12px;color:var(--muted)}
+.sec-h .bar{width:4px;height:16px;border-radius:2px;background:var(--brand);align-self:center}
+
+/* ---------- card ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:14px 15px;margin:10px 0}
+
+/* ---------- checklist ---------- */
+.progress{position:sticky;top:0;z-index:5;margin:0 -16px 4px;padding:10px 16px 11px;
+  background:linear-gradient(var(--paper) 72%,rgba(247,241,230,0));backdrop-filter:blur(2px)}
+.progress-in{display:flex;align-items:center;gap:10px}
+.bar-track{flex:1;height:7px;border-radius:99px;background:var(--line2);overflow:hidden}
+.bar-fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--brand),#e8734a);transition:width .35s ease}
+.progress .num{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.progress .num b{color:var(--brand);font-size:15px}
+.group{margin-top:6px}
+.group-h{display:flex;align-items:center;gap:8px;margin:16px 6px 8px;font-size:13.5px;font-weight:700;color:var(--ink2)}
+.group-h .ico{font-size:15px}
+.check{display:flex;gap:11px;align-items:flex-start;width:100%;text-align:left;padding:13px 14px;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;margin:8px 0;box-shadow:var(--shadow);
+  transition:transform .12s ease,background .2s}
+.check:active{transform:scale(.985)}
+.check .box{flex:0 0 22px;width:22px;height:22px;border-radius:7px;border:2px solid var(--line);margin-top:1px;
+  display:flex;align-items:center;justify-content:center;transition:.18s}
+.check .box svg{width:13px;height:13px;opacity:0;transform:scale(.6);transition:.18s}
+.check .txt{flex:1;min-width:0}
+.check .t{display:block;font-size:15px;font-weight:600;line-height:1.4}
+.check .s{display:block;font-size:12px;color:var(--muted);margin-top:3px}
+.check.done{background:var(--brand-soft);border-color:#f2c6ae}
+.check.done .box{background:var(--brand);border-color:var(--brand)}
+.check.done .box svg{opacity:1;transform:scale(1)}
+.check.done .t{text-decoration:line-through;text-decoration-color:rgba(194,65,12,.45);color:var(--ink2)}
+.mini{font-size:11.5px;color:var(--teal);border:1px solid #cfe3df;background:var(--teal-soft);
+  border-radius:99px;padding:2px 8px;white-space:nowrap;font-weight:600}
+
+/* ---------- itinerary ---------- */
+.day{display:flex;gap:13px;padding:0 0 4px}
+.day-rail{flex:0 0 44px;display:flex;flex-direction:column;align-items:center}
+.day-date{font-size:12.5px;font-weight:800;color:var(--ink2);font-variant-numeric:tabular-nums}
+.day-w{font-size:10.5px;color:var(--muted)}
+.day-line{flex:1;width:2px;background:var(--line);margin:6px 0 2px;border-radius:2px}
+.day-body{flex:1;padding-bottom:16px}
+.day-card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:13px 14px;box-shadow:var(--shadow)}
+.day-card h3{font-size:15.5px;font-weight:750;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.day-card p{font-size:13.5px;color:var(--ink2);margin-top:7px}
+.day-tag{font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:2.5px 8px;border-radius:99px;
+  background:var(--line2);color:var(--ink2);white-space:nowrap}
+.day.past .day-card{opacity:.5}
+.day.now .day-card{border-color:#e8b59a;background:linear-gradient(180deg,var(--brand-soft),var(--card) 70%)}
+.day.now .day-tag{background:var(--brand);color:#fff}
+.now-badge{font-size:10.5px;font-weight:800;color:#fff;background:var(--brand);border-radius:99px;padding:2.5px 8px;letter-spacing:.06em}
+.alert{margin-top:10px;font-size:12.5px;color:#8a3b12;background:#fbeee2;border-left:3px solid var(--brand);
+  border-radius:0 8px 8px 0;padding:8px 10px;line-height:1.5}
+
+.route-btn{display:inline-flex;align-items:center;gap:6px;margin-top:11px;font-size:12.5px;font-weight:700;
+  color:#fff;background:var(--brand);border-radius:99px;padding:7px 13px;box-shadow:0 4px 12px rgba(194,65,12,.25)}
+
+/* ---------- tips ---------- */
+.acc{border:1px solid var(--line);border-radius:16px;background:var(--card);box-shadow:var(--shadow);margin:10px 0;overflow:hidden}
+.acc-h{display:flex;width:100%;align-items:center;gap:10px;padding:14px 15px;text-align:left;font-weight:700;font-size:15px}
+.acc-h .chev{margin-left:auto;transition:transform .2s;color:var(--muted)}
+.acc.open .chev{transform:rotate(180deg)}
+.acc-b{display:none;padding:0 15px 15px}
+.acc.open .acc-b{display:block}
+body.long .acc-b{display:block}
+body.long .acc .chev{transform:rotate(180deg)}
+@media print{ .acc-b{display:block!important} }
+.acc ul{list-style:none;margin:0;padding:0}
+.acc li{font-size:13.5px;color:var(--ink2);line-height:1.62;margin:9px 0;padding-left:16px;position:relative}
+.acc li:before{content:"";position:absolute;left:2px;top:9px;width:5px;height:5px;border-radius:99px;background:var(--brand);opacity:.55}
+
+/* ---------- map ---------- */
+#map{position:absolute;inset:0;background:#ece6da;overflow:hidden;touch-action:none}
+#world{position:absolute;left:0;top:0;width:0;height:0;transform-origin:0 0;will-change:transform}
+#world .tile{position:absolute;width:256px;height:256px;display:block;user-select:none;-webkit-user-drag:none}
+#world svg{position:absolute;left:0;top:0;width:0;height:0;overflow:visible;pointer-events:none}
+.pin{position:absolute;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;
+  transform-origin:50% 100%;cursor:pointer;z-index:3}
+/* 手指可点区域：视觉只有 26px 的点，但热区放大到 40px（手机上别要求精确到像素） */
+.pin:before{content:"";position:absolute;left:50%;top:-5px;width:40px;height:42px;transform:translateX(-50%);border-radius:99px}
+.pin .dot{width:26px;height:26px;border-radius:99px;border:2.5px solid #fff;color:#fff;font-size:11.5px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 3px 9px rgba(0,0,0,.28);font-variant-numeric:tabular-nums}
+.pin .lbl{margin-top:4px;font-size:10.5px;font-weight:700;color:#2b2119;background:rgba(255,255,255,.92);
+  border-radius:99px;padding:1.5px 7px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.16);opacity:0;transition:opacity .2s}
+.pin.showlbl .lbl{opacity:1}
+.pin.sel .dot{transform:scale(1.22)}
+.pin.sel{z-index:5}
+.pin .dot{transition:transform .15s}
+
+.map-top{position:absolute;top:0;left:0;right:0;z-index:9;padding:calc(10px + env(safe-area-inset-top)) 12px 14px;
+  background:linear-gradient(rgba(247,241,230,.96),rgba(247,241,230,.72) 62%,rgba(247,241,230,0))}
+.map-title{display:flex;align-items:baseline;gap:8px;padding:0 4px 9px}
+.map-title b{font-size:17px;font-weight:800;letter-spacing:.01em}
+.map-title span{font-size:11.5px;color:var(--muted)}
+.chips{display:flex;gap:7px;overflow-x:auto;padding:1px 2px 3px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--card);
+  border:1px solid var(--line);border-radius:99px;padding:6px 12px;box-shadow:0 1px 2px rgba(0,0,0,.04);white-space:nowrap}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.map-status{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(14px + var(--navh));
+  z-index:8;font-size:11.5px;color:var(--ink2);background:rgba(255,255,255,.9);border:1px solid var(--line);
+  border-radius:99px;padding:5px 12px;box-shadow:var(--shadow);opacity:0;transition:opacity .3s;pointer-events:none}
+.map-status.on{opacity:1}
+.offline-h{text-align:center;margin-bottom:14px}
+.offline-h b{display:block;font-size:16px;font-weight:800}
+.offline-h span{font-size:11.5px;color:var(--muted)}
+#offline{position:absolute;inset:0;z-index:7;display:none;overflow-y:auto;padding:calc(96px + env(safe-area-inset-top)) 14px 24px;
+  background:var(--paper)}
+#offline.on{display:block}
+
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:12;transform:translateY(103%);transition:transform .28s cubic-bezier(.2,.8,.2,1);
+  background:var(--card);border-radius:20px 20px 0 0;border-top:1px solid var(--line);
+  box-shadow:0 -10px 40px rgba(50,35,20,.16);max-height:74%;overflow-y:auto}
+.sheet.on{transform:translateY(0)}
+.sheet-grab{width:38px;height:4px;border-radius:99px;background:var(--line);margin:9px auto 2px}
+.sheet-in{padding:8px 18px calc(20px + var(--safe-b))}
+.sheet-h{display:flex;align-items:flex-start;gap:10px}
+.sheet-h h3{font-size:19px;font-weight:800;line-height:1.25;flex:1}
+.sheet .no{flex:0 0 26px;height:26px;border-radius:99px;color:#fff;font-size:12px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;margin-top:2px}
+.sheet .tagline{font-size:13px;color:var(--brand);font-weight:700;margin-top:6px}
+.sheet .desc{font-size:13.5px;color:var(--ink2);margin-top:9px;line-height:1.62}
+.sheet .rows{margin-top:11px;display:grid;gap:7px}
+.sheet .row{display:flex;gap:9px;font-size:13px;color:var(--ink2);line-height:1.5}
+.sheet .row .k{flex:0 0 46px;color:var(--muted);font-size:12px;padding-top:1px}
+.sheet .items{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+.sheet .items b{font-size:12px;font-weight:700;color:#8a3b12;background:var(--brand-soft);border-radius:99px;padding:4px 10px}
+.sheet .note{margin-top:12px;font-size:12.5px;color:var(--ink2);background:var(--paper);border-radius:11px;padding:9px 11px;line-height:1.55}
+.sheet .acts{display:flex;gap:9px;margin-top:14px}
+.btn{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;height:44px;border-radius:13px;font-size:14px;font-weight:750}
+.btn.primary{background:var(--brand);color:#fff;box-shadow:0 6px 16px rgba(194,65,12,.28)}
+.btn.ghost{background:var(--paper);border:1px solid var(--line);color:var(--ink2)}
+.scrim{position:absolute;inset:0;z-index:11;background:rgba(30,20,12,.28);opacity:0;pointer-events:none;transition:opacity .25s}
+.scrim.on{opacity:1;pointer-events:auto}
+
+/* ---------- route diagram ---------- */
+.diagram{padding:2px 2px 8px}
+.dgroup{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 13px;box-shadow:var(--shadow)}
+.dgroup h4{font-size:13.5px;font-weight:800;display:flex;align-items:center;gap:7px;margin-bottom:9px}
+.dgroup h4 i{width:8px;height:8px;border-radius:99px;display:inline-block}
+.ditems{display:flex;flex-wrap:wrap;gap:6px}
+.ditem{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--ink2);
+  background:var(--paper);border:1px solid var(--line2);border-radius:99px;padding:4px 9px 4px 4px}
+.ditem .n{width:17px;height:17px;border-radius:99px;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.dlink{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0;color:var(--teal)}
+.dlink .dash{width:2px;height:16px;background:repeating-linear-gradient(var(--teal) 0 4px,transparent 4px 8px);border-radius:2px}
+.dlink span{font-size:11.5px;font-weight:800;letter-spacing:.02em;background:var(--teal-soft);border-radius:99px;padding:3px 10px}
+.diagram-hint{font-size:11.5px;color:var(--muted);text-align:center;margin-top:12px}
+
+/* ---------- tabbar ---------- */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;height:var(--navh);display:flex;
+  padding-bottom:var(--safe-b);background:rgba(255,253,248,.94);backdrop-filter:blur(14px);
+  border-top:1px solid var(--line)}
+
+.tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  color:var(--muted);font-size:10.5px;font-weight:700;letter-spacing:.02em}
+.tabbar button svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tabbar button.on{color:var(--brand)}
+.tabbar button.on svg{stroke-width:2.2}
+.toast{position:fixed;left:50%;bottom:calc(var(--navh) + 18px);transform:translate(-50%,14px);z-index:40;
+  background:var(--ink);color:var(--paper);font-size:12.5px;font-weight:600;border-radius:99px;padding:9px 16px;
+  opacity:0;pointer-events:none;transition:.28s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- 宽屏（电脑浏览器打开时）：收成手机宽的一列，别把卡片拉成一条马路 ---------- */
+@media screen and (min-width:600px){
+  body{background:#e7dccb}
+  #panes{left:calc(50% - 215px);right:auto;width:430px;
+    box-shadow:0 0 0 1px var(--line),0 26px 70px rgba(60,45,30,.16)}
+  .tabbar{left:calc(50% - 215px);right:auto;width:430px;
+    border-left:1px solid var(--line);border-right:1px solid var(--line)}
+  body.long #panes,body.long .tabbar{left:auto;width:auto;box-shadow:none}
+}
+
+/* ---------- 长图 / 打印（线性文档） ---------- */
+body.long #panes{position:static;bottom:auto}
+body.long .pane{display:block;position:static;overflow:visible;height:auto}
+body.long #pane-map{position:relative;height:470px;overflow:hidden}
+body.long .tabbar{position:static;height:54px;padding-bottom:8px}
+body.long .map-status,body.long .sheet,body.long .scrim{display:none!important}
+body.long .pane{padding-bottom:10px}
+
+@media print{
+  #panes{position:static}
+  .pane{display:block!important;position:static;overflow:visible}
+  .pane + .pane{page-break-before:always}
+  .tabbar,.map-top,.sheet,.scrim,.map-status,.progress,.map-status{display:none!important}
+  .hero{padding-top:0;page-break-after:avoid}
+  #pane-map{display:none!important}
+  .card,.check,.day-card,.acc{box-shadow:none;page-break-inside:avoid}
+  .check .box{print-color-adjust:exact}
+  .check .mini{display:none}
+}
+</style>
+</head>
+<body>
+<div id="panes">
+  <!-- ================= MAP ================= -->
+  <section class="pane on" id="pane-map">
+    <div id="map">
+      <div id="world"></div>
+      <div class="map-top">
+        <div class="map-title"><b>广州 · 吃好一点</b><span>点标记看详情</span></div>
+        <div class="chips" id="mapChips"></div>
+      </div>
+      <div class="map-status" id="mapStatus"></div>
+      <div class="scrim" id="scrim"></div>
+      <div class="sheet" id="sheet"><div class="sheet-grab"></div><div class="sheet-in" id="sheetIn"></div></div>
+      <div id="offline"></div>
+    </div>
+  </section>
+
+  <!-- ================= EAT ================= -->
+  <section class="pane" id="pane-eat">
+    <header class="hero">
+      <div class="kicker">CPhO 决赛周 · 10.28 — 11.4</div>
+      <h1>广州 · <em>吃好一点</em></h1>
+      <div class="rule"></div>
+      <p class="lede">日常就近吃，老城只去一两次。一天最多两件事，其中一件必须是吃。</p>
+      <div class="hero-meta">
+        <span class="pill">住科学城</span>
+        <span class="pill">考场 广州二中</span>
+        <span class="pill hot" id="todayChip">今天该干嘛</span>
+      </div>
+    </header>
+    <div class="wrap">
+      <div class="progress"><div class="progress-in">
+        <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
+        <div class="num">已打卡 <b id="cDone">0</b>/<span id="cAll">0</span></div>
+      </div></div>
+      <div id="listWrap"></div>
+    </div>
+  </section>
+
+  <!-- ================= PLAN ================= -->
+  <section class="pane" id="pane-plan">
+    <header class="hero">
+      <div class="kicker">这周的时间表</div>
+      <h1>哪天真的<em>能玩</em></h1>
+      <div class="rule"></div>
+      <p class="lede">只有 11/2 下午、11/3 白天适合进城。考试两天单程五十多分钟，来回就是两小时，不值。</p>
+    </header>
+    <div class="wrap">
+      <div class="sec-h"><span class="bar"></span><h2>八天</h2><span class="sub">今天高亮</span></div>
+      <div id="days"></div>
+      <div class="sec-h"><span class="bar"></span><h2>两条主线</h2><span class="sub">一次只挑一条</span></div>
+      <div class="diagram" id="diagramPlan"></div>
+      <button class="route-btn" id="planMapBtn">在地图上看全部点位 →</button>
+    </div>
+  </section>
+
+  <!-- ================= TIPS ================= -->
+  <section class="pane" id="pane-tips">
+    <header class="hero">
+      <div class="kicker">小抄</div>
+      <h1>别踩<em>坑</em>就行</h1>
+      <div class="rule"></div>
+      <p class="lede">这周的任务是把题做对、把虾饺吃够，别的都不重要。</p>
+    </header>
+    <div class="wrap"><div id="tips"></div></div>
+  </section>
+</div>
+
+<nav class="tabbar">
+  <button data-tab="map" class="on">
+    <svg viewBox="0 0 24 24"><path d="M9 4 3 6.5v14L9 18l6 2.5 6-2.5v-14L15 6.5 9 4Z"/><path d="M9 4v14M15 6.5v14"/></svg>地图
+  </button>
+  <button data-tab="eat">
+    <svg viewBox="0 0 24 24"><path d="M4 10h16a8 8 0 0 1-16 0Z"/><path d="M12 10V6M9 3h6"/><path d="M4 20h16"/></svg>吃
+  </button>
+  <button data-tab="plan">
+    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M8 15h3M8 18h6"/></svg>日程
+  </button>
+  <button data-tab="tips">
+    <svg viewBox="0 0 24 24"><path d="M12 3l8 4v6c0 5-3.5 7.2-8 8-4.5-.8-8-3-8-8V7l8-4Z"/><path d="M9.5 12.2 11.4 14l3.4-3.6"/></svg>备忘
+  </button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA = {
+ "meta": {
+  "title": "广州 · 吃好一点",
+  "subtitle": "CPhO 决赛周 · 10.28 – 11.4 · 住科学城版",
+  "lede": "日常就近吃，老城只去一两次。一天最多两件事，其中一件必须是吃。",
+  "dateRange": [
+   "2026-10-28",
+   "2026-11-04"
+  ],
+  "coordNote": "点位为街区级参考；精确找店请点卡片里的「高德导航」。"
+ },
+ "views": {
+  "oldtown": {
+   "lat": 23.118,
+   "lon": 113.2395,
+   "z": 14.5,
+   "name": "老西关 · 北京路"
+  },
+  "kxc": {
+   "lat": 23.177,
+   "lon": 113.4745,
+   "z": 14.6,
+   "name": "科学城 · 萝岗"
+  }
+ },
+ "pois": [
+  {
+   "id": "hotel",
+   "name": "瑞季美仑国际酒店",
+   "kind": "home",
+   "view": "kxc",
+   "lat": 23.17247,
+   "lon": 113.48164,
+   "tag": "落脚点",
+   "addr": "黄埔区新阳东路（萝岗科学城）",
+   "desc": "楼下和商场里有粥粉面、烧腊饭、奶茶，考试日就靠这一片解决。",
+   "note": "新区没有老字号，但基本款不会翻车。别在这儿找「网红早茶」，进城吃更值。",
+   "conf": "street"
+  },
+  {
+   "id": "exam",
+   "name": "广州二中 · 科学城校区",
+   "kind": "exam",
+   "view": "kxc",
+   "lat": 23.18151,
+   "lon": 113.46588,
+   "tag": "考场",
+   "addr": "水西路",
+   "desc": "从酒店打车十来分钟。出发前用地图确认一次。",
+   "note": "早高峰多留 10 分钟；考场空调可能冷，短袖外面套件薄外套。",
+   "conf": "good"
+  },
+  {
+   "id": "luogang",
+   "name": "萝岗站",
+   "kind": "metro",
+   "view": "kxc",
+   "lat": 23.17835,
+   "lon": 113.47572,
+   "tag": "6 号线",
+   "addr": "6 号线 · 萝岗站",
+   "desc": "进城唯一要记的一条：6 号线从萝岗一路坐到黄沙，不用换乘，约 50 分钟。",
+   "note": "酒店到地铁站走路十几分钟，懒得走就打车起步价。香雪站也能上，看哪边近。",
+   "conf": "good"
+  },
+  {
+   "id": "huangsha",
+   "name": "黄沙站",
+   "kind": "metro",
+   "view": "oldtown",
+   "lat": 23.11193,
+   "lon": 113.23497,
+   "tag": "6 号线终点",
+   "addr": "6 号线 · 黄沙站",
+   "desc": "出站就是沙面；再往北走，过桥就是上下九。",
+   "note": "换 1 号线两站可到陈家祠。",
+   "conf": "street"
+  },
+  {
+   "id": "shamian",
+   "name": "沙面",
+   "kind": "scenic",
+   "view": "oldtown",
+   "lat": 23.10945,
+   "lon": 113.23931,
+   "tag": "散步 20 分钟",
+   "addr": "沙面岛",
+   "desc": "欧陆老建筑 + 江边风。热了就钻进咖啡馆，不用赶。",
+   "note": "从黄沙站走过来几分钟，全岛走路很平，不费腿。",
+   "conf": "good"
+  },
+  {
+   "id": "shifupu",
+   "name": "第十甫路 · 早茶一条街",
+   "kind": "tea",
+   "view": "oldtown",
+   "lat": 23.11605,
+   "lon": 113.23712,
+   "tag": "早茶",
+   "addr": "第十甫路（陶陶居总店 / 莲香楼 / 南信都在这条街上）",
+   "desc": "广州的灵魂。虾饺、干蒸烧卖、豉汁凤爪、肠粉、糯米鸡、叉烧包，一盅两件，3–4 样就够。",
+   "items": [
+    "虾饺",
+    "豉汁凤爪",
+    "干蒸烧卖"
+   ],
+   "price": "人均 60–100 元",
+   "when": "7:30–11:00 最舒服，工作日基本不排队",
+   "note": "陶陶居（第十甫路总店最老）、莲香楼、广州酒家（文昌路）都在这附近。",
+   "conf": "good"
+  },
+  {
+   "id": "nansen",
+   "name": "南信牛奶甜品专家",
+   "kind": "dessert",
+   "view": "oldtown",
+   "lat": 23.11615,
+   "lon": 113.23757,
+   "tag": "双皮奶",
+   "addr": "第十甫路",
+   "desc": "双皮奶、姜撞奶。吃完咸的必须来一碗。",
+   "items": [
+    "双皮奶",
+    "姜撞奶"
+   ],
+   "price": "10–15 元",
+   "conf": "good"
+  },
+  {
+   "id": "chengtianji",
+   "name": "陈添记鱼皮",
+   "kind": "snack",
+   "view": "oldtown",
+   "lat": 23.11645,
+   "lon": 113.23625,
+   "tag": "几十年老店",
+   "addr": "宝华路十五甫三巷",
+   "desc": "爽脆鱼皮拌花生，几十年就卖这几样。",
+   "items": [
+    "爽脆鱼皮"
+   ],
+   "price": "十几块",
+   "conf": "good"
+  },
+  {
+   "id": "shunji",
+   "name": "顺记冰室",
+   "kind": "dessert",
+   "view": "oldtown",
+   "lat": 23.11656,
+   "lon": 113.23624,
+   "tag": "椰子雪糕",
+   "addr": "宝华路",
+   "desc": "老冰室，椰子雪糕是招牌。走热了进来歇。",
+   "items": [
+    "椰子雪糕"
+   ],
+   "price": "10–20 元",
+   "conf": "good"
+  },
+  {
+   "id": "baohuamian",
+   "name": "宝华面店",
+   "kind": "noodle",
+   "view": "oldtown",
+   "lat": 23.11867,
+   "lon": 113.23648,
+   "tag": "云吞面",
+   "addr": "宝华路",
+   "desc": "竹升面配鲜虾云吞。一个人吃最舒服的一顿。",
+   "items": [
+    "鲜虾云吞面"
+   ],
+   "price": "15–25 元",
+   "conf": "good"
+  },
+  {
+   "id": "shangxiajiu",
+   "name": "上下九步行街",
+   "kind": "walk",
+   "view": "oldtown",
+   "lat": 23.1172,
+   "lon": 113.2425,
+   "tag": "边走边吃",
+   "addr": "上下九路一带",
+   "desc": "萝卜牛杂、猪脚姜、炸鱼皮、碗仔翅、炒螺，十几块一份。",
+   "note": "站门口招呼的店别进，先看菜单标价再坐下。",
+   "conf": "street"
+  },
+  {
+   "id": "yongqingfang",
+   "name": "永庆坊 · 恩宁路",
+   "kind": "scenic",
+   "view": "oldtown",
+   "lat": 23.1175,
+   "lon": 113.2329,
+   "tag": "拍照",
+   "addr": "恩宁路永庆坊",
+   "desc": "想拍照就来。骑楼、粤剧艺术博物馆（免费，门口扫码预约）。",
+   "conf": "good"
+  },
+  {
+   "id": "chenjiaci",
+   "name": "陈家祠",
+   "kind": "optional",
+   "view": "oldtown",
+   "lat": 23.12983,
+   "lon": 113.24013,
+   "tag": "加分项",
+   "addr": "中山七路 · 陈家祠",
+   "desc": "木雕砖雕灰塑，半小时看完。门票 10 元。",
+   "note": "黄沙换 1 号线两站就到。",
+   "conf": "good"
+  },
+  {
+   "id": "bjlstation",
+   "name": "北京路站",
+   "kind": "metro",
+   "view": "oldtown",
+   "lat": 23.12164,
+   "lon": 113.26502,
+   "tag": "6 号线",
+   "addr": "6 号线 · 北京路站",
+   "desc": "回程原路 6 号线，五十来分钟到萝岗。",
+   "note": "末班大概 22:30–23:00，别赌太晚。",
+   "conf": "good"
+  },
+  {
+   "id": "bjl",
+   "name": "北京路步行街",
+   "kind": "walk",
+   "view": "oldtown",
+   "lat": 23.12587,
+   "lon": 113.26358,
+   "tag": "吃饭逛街一体",
+   "addr": "北京路",
+   "desc": "宋代路面遗址免费看，两边全是店。走累了坐下吃就行。",
+   "conf": "good"
+  },
+  {
+   "id": "dafosi",
+   "name": "大佛寺",
+   "kind": "scenic",
+   "view": "oldtown",
+   "lat": 23.12493,
+   "lon": 113.26265,
+   "tag": "顺路",
+   "addr": "惠福东路 · 大佛寺",
+   "desc": "晚上亮灯好看，白天进去凉快。",
+   "conf": "good"
+  },
+  {
+   "id": "huifudong",
+   "name": "惠福东路美食街",
+   "kind": "snack",
+   "view": "oldtown",
+   "lat": 23.12396,
+   "lon": 113.26242,
+   "tag": "小吃集中地",
+   "addr": "惠福东路",
+   "desc": "两边全是小吃，随便挑一家坐下。",
+   "conf": "street"
+  },
+  {
+   "id": "baihua",
+   "name": "百花甜品",
+   "kind": "dessert",
+   "view": "oldtown",
+   "lat": 23.12517,
+   "lon": 113.27018,
+   "tag": "糖水",
+   "addr": "文明路",
+   "desc": "绿豆沙、芝麻糊、杨枝甘露。隔壁几步还有玫瑰甜品，可以连着吃。",
+   "items": [
+    "绿豆沙",
+    "杨枝甘露"
+   ],
+   "price": "10–15 元",
+   "conf": "good"
+  },
+  {
+   "id": "dayang",
+   "name": "达扬原味炖品",
+   "kind": "soup",
+   "view": "oldtown",
+   "lat": 23.12522,
+   "lon": 113.26875,
+   "tag": "炖品",
+   "addr": "文明路",
+   "desc": "椰子炖竹丝鸡，晚上喝一盅很舒服。",
+   "items": [
+    "椰子炖竹丝鸡"
+   ],
+   "price": "20–30 元",
+   "conf": "good"
+  },
+  {
+   "id": "lichiwan",
+   "name": "荔枝湾涌",
+   "kind": "optional",
+   "view": "oldtown",
+   "lat": 23.11804,
+   "lon": 113.23066,
+   "tag": "加分项",
+   "addr": "荔枝湾",
+   "desc": "从上下九走过去十几分钟，坐一小段船，泮塘一带吃小吃。",
+   "conf": "good"
+  },
+  {
+   "id": "cantontower",
+   "name": "广州塔",
+   "kind": "optional",
+   "view": "oldtown",
+   "lat": 23.10901,
+   "lon": 113.31915,
+   "tag": "加分项",
+   "addr": "阅江西路",
+   "desc": "离科学城最远、最花时间。只有 11/3 闭幕式前特别空才考虑。",
+   "conf": "good"
+  }
+ ],
+ "routes": [
+  {
+   "id": "lineA",
+   "name": "老西关 A 线",
+   "color": "#c2410c",
+   "view": "oldtown",
+   "stops": [
+    "huangsha",
+    "shamian",
+    "shangxiajiu",
+    "shifupu",
+    "chengtianji",
+    "yongqingfang"
+   ],
+   "legs": [
+    "黄沙站 → 沙面 走 5 分",
+    "沙面 → 上下九 走 15 分",
+    "上下九 → 第十甫路 边走边吃",
+    "第十甫路 → 宝华路 5 分",
+    "宝华路 → 永庆坊 10 分"
+   ],
+   "label": "11/2 下午 · 一趟 6 号线直达"
+  },
+  {
+   "id": "lineB",
+   "name": "北京路 B 线",
+   "color": "#0f766e",
+   "view": "oldtown",
+   "stops": [
+    "bjlstation",
+    "bjl",
+    "huifudong",
+    "dafosi",
+    "baihua",
+    "dayang"
+   ],
+   "legs": [
+    "北京路站 → 步行街",
+    "惠福东路 小吃",
+    "大佛寺 顺路",
+    "文明路 糖水",
+    "炖品收尾"
+   ],
+   "label": "11/3 白天 · 2–3 小时"
+  },
+  {
+   "id": "metro6",
+   "name": "6 号线",
+   "color": "#2563eb",
+   "view": "all",
+   "solid": true,
+   "onlyWhenVisible": true,
+   "stops": [
+    "luogang",
+    "huangsha"
+   ],
+   "label": "萝岗 ⇄ 黄沙 · 直达不换乘 约 50 分钟"
+  }
+ ],
+ "itinerary": [
+  {
+   "date": "2026-10-28",
+   "w": "周三",
+   "title": "到广州",
+   "plan": "安顿好，就近吃碗粥 / 粉 / 面，买瓶水买点水果，早睡。",
+   "tag": "落地"
+  },
+  {
+   "date": "2026-10-29",
+   "w": "周四",
+   "title": "报到日",
+   "plan": "跟队报到，全天没空。饭在酒店或楼下解决，晚上早点睡。",
+   "tag": "没空"
+  },
+  {
+   "date": "2026-10-30",
+   "w": "周五",
+   "title": "参观考场",
+   "plan": "上午跟队参观，顺便把酒店 → 考场的路和时间走一遍；下午回房睡。饭在科学城吃，不进老城。",
+   "tag": "科学城"
+  },
+  {
+   "date": "2026-10-31",
+   "w": "周六",
+   "title": "全天考试",
+   "plan": "上午理论、下午实验。早餐吃熟悉的（粥 + 包），午餐七分饱、清淡不油腻；考完就近吃一顿正经的庆祝。",
+   "tag": "考试",
+   "alert": "别吃生的：刺身、生腌、没吃过的东西都先放着；不喝太多冰的。"
+  },
+  {
+   "date": "2026-11-01",
+   "w": "周日",
+   "title": "参观 + 讲座",
+   "plan": "白天跟队走；讲座结束后吃夜宵——楼下粥粉面或点外卖，十几分钟搞定。",
+   "tag": "科学城",
+   "alert": "第二天要复查卷，夜宵别乱吃生冷。"
+  },
+  {
+   "date": "2026-11-02",
+   "w": "周一",
+   "title": "进城吃够",
+   "plan": "上午复核查分卷，手续办完就走：6 号线直达黄沙，沙面 + 上下九 + 宝华路一路吃，晚上原路回。",
+   "tag": "老西关 A 线",
+   "route": "lineA"
+  },
+  {
+   "date": "2026-11-03",
+   "w": "周二",
+   "title": "白天自由 + 闭幕式",
+   "plan": "白天 6 号线去北京路（2–3 小时），下午回来睡一觉；闭幕式后可以正式庆祝一顿。",
+   "tag": "北京路 B 线",
+   "route": "lineB"
+  },
+  {
+   "date": "2026-11-04",
+   "w": "周三",
+   "title": "离会",
+   "plan": "早上就近吃个早饭，直接去机场 / 高铁站。手信在 11/2、11/3 进城时买好。",
+   "tag": "走"
+  }
+ ],
+ "lists": [
+  {
+   "id": "dimsum",
+   "title": "早茶",
+   "icon": "🫖",
+   "items": [
+    {
+     "id": "dimsum-tea",
+     "t": "喝一次正经早茶（虾饺 + 凤爪）",
+     "poi": "shifupu"
+    }
+   ]
+  },
+  {
+   "id": "noodle",
+   "title": "粉面粥",
+   "icon": "🍜",
+   "items": [
+    {
+     "id": "wonton",
+     "t": "一碗云吞面",
+     "poi": "baohuamian"
+    },
+    {
+     "id": "changfen",
+     "t": "一份肠粉（鲜虾或牛肉）",
+     "poi": "huifudong"
+    }
+   ]
+  },
+  {
+   "id": "roast",
+   "title": "烧腊鸡鹅",
+   "icon": "🍗",
+   "items": [
+    {
+     "id": "goose",
+     "t": "一份烧鹅饭（进城再吃）",
+     "poi": null
+    }
+   ]
+  },
+  {
+   "id": "snack",
+   "title": "牛杂小吃",
+   "icon": "🍢",
+   "items": [
+    {
+     "id": "niuzai",
+     "t": "萝卜牛杂",
+     "poi": "shangxiajiu"
+    },
+    {
+     "id": "yupi",
+     "t": "陈添记鱼皮",
+     "poi": "chengtianji"
+    }
+   ]
+  },
+  {
+   "id": "sweet",
+   "title": "糖水甜品",
+   "icon": "🍮",
+   "items": [
+    {
+     "id": "shuangpinai",
+     "t": "双皮奶 / 姜撞奶",
+     "poi": "nansen"
+    },
+    {
+     "id": "xuegao",
+     "t": "顺记椰子雪糕",
+     "poi": "shunji"
+    },
+    {
+     "id": "dunpin",
+     "t": "一盅炖品",
+     "poi": "dayang"
+    }
+   ]
+  },
+  {
+   "id": "local",
+   "title": "科学城就近吃",
+   "icon": "🏢",
+   "items": [
+    {
+     "id": "mall",
+     "t": "商场里解决一顿",
+     "poi": null
+    },
+    {
+     "id": "waimai",
+     "t": "点一次外卖（粥 / 粉 / 烧腊）",
+     "poi": null
+    }
+   ]
+  },
+  {
+   "id": "gift",
+   "title": "夜宵与手信",
+   "icon": "🎁",
+   "items": [
+    {
+     "id": "giftbuy",
+     "t": "买手信：鸡仔饼 / 腊肠 / 虾子面",
+     "poi": "shangxiajiu"
+    },
+    {
+     "id": "yexiao",
+     "t": "吃一次夜宵",
+     "poi": null
+    }
+   ]
+  }
+ ],
+ "notes": [
+  {
+   "title": "这几件事别干",
+   "items": [
+    "考试两天别进城：单程五十多分钟，来回两小时，不值。",
+    "10/30、10/31 不吃生的，不喝太多冰的，早餐固定。",
+    "拉客的店别进：上下九、北京路先看菜单标价再坐下。",
+    "长隆、白云山这类跳过：一天走两万步，跟「轻松」冲突。",
+    "手信一定要在 11/2 或 11/3 进城时买好——科学城买不到。"
+   ]
+  },
+  {
+   "title": "实用小抄",
+   "items": [
+    "交通：微信 / 支付宝搜「乘车码」直接刷地铁，不用买卡。",
+    "时间账：酒店 → 考场 打车十来分钟；酒店 → 黄沙 / 北京路 地铁约 50 分钟。",
+    "末班车：地铁大概 22:30–23:00，错过打车回科学城四十分钟。",
+    "付钱：基本全是微信 / 支付宝，不用带现金。",
+    "排队：工作日下午茶时段最空；周末早茶 9 点后要等位。",
+    "一个人吃：茶楼、面店、糖水铺都对单人友好。",
+    "吃坏肚子：蒙脱石散 + 口服补液盐，这两天只吃白粥，别硬扛。"
+   ]
+  },
+  {
+   "title": "广州这几天",
+   "items": [
+    "10 月底还有 25–30℃，湿热，一天两瓶水起步。",
+    "带伞：这个季节动不动来一阵雨。",
+    "怕上火喝甜口凉茶就行，别第一次挑战苦的癍痧。",
+    "考场空调可能冷，短袖外面套件薄外套。"
+   ]
+  }
+ ],
+ "schematic": {
+  "groups": [
+   {
+    "title": "科学城 · 萝岗",
+    "color": "#0f766e",
+    "items": [
+     "hotel",
+     "exam",
+     "luogang"
+    ]
+   },
+   {
+    "title": "老西关（11/2）",
+    "color": "#c2410c",
+    "items": [
+     "huangsha",
+     "shamian",
+     "shifupu",
+     "shangxiajiu",
+     "chengtianji",
+     "yongqingfang"
+    ]
+   },
+   {
+    "title": "北京路（11/3）",
+    "color": "#b45309",
+    "items": [
+     "bjlstation",
+     "bjl",
+     "huifudong",
+     "dafosi",
+     "baihua",
+     "dayang"
+    ]
+   },
+   {
+    "title": "顺路加分项",
+    "color": "#6b7280",
+    "items": [
+     "chenjiaci",
+     "lichiwan",
+     "cantontower"
+    ]
+   }
+  ],
+  "link": {
+   "from": "luogang",
+   "to": "huangsha",
+   "label": "6 号线 · 直达 约 50 分钟"
+  }
+ }
+};
+
+/* ============ 基础工具 ============ */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const el = (tag, cls, html) => { const n = document.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; };
+const PIN_COLORS = { home:'#6366f1', exam:'#b91c1c', metro:'#2563eb', tea:'#c2410c', dessert:'#db2777',
+  snack:'#d97706', noodle:'#0891b2', walk:'#0f766e', scenic:'#15803d', soup:'#a16207', optional:'#6b7280' };
+const KIND_ZH = { home:'住宿', exam:'考场', metro:'地铁站', tea:'早茶', dessert:'糖水甜品', snack:'小吃',
+  noodle:'粉面', walk:'逛街', scenic:'景点', soup:'炖品', optional:'加分项' };
+const BY_ID = {}; DATA.pois.forEach((p, i) => { p.n = i + 1; BY_ID[p.id] = p; });
+
+/* WGS-84 -> GCJ-02（高德瓦片用 GCJ-02） */
+const PI = Math.PI, AXIS = 6378245.0, ECC = 0.00669342162296594323;
+function outOfChina(lat, lon){ return !(lon > 73.66 && lon < 135.05 && lat > 3.86 && lat < 53.55); }
+function tLat(x, y){
+  let r = -100 + 2*x + 3*y + 0.2*y*y + 0.1*x*y + 0.2*Math.sqrt(Math.abs(x));
+  r += (20*Math.sin(6*x*PI) + 20*Math.sin(2*x*PI)) * 2/3;
+  r += (20*Math.sin(y*PI) + 40*Math.sin(y/3*PI)) * 2/3;
+  r += (160*Math.sin(y/12*PI) + 320*Math.sin(y*PI/30)) * 2/3;
+  return r;
+}
+function tLon(x, y){
+  let r = 300 + x + 2*y + 0.1*x*x + 0.1*x*y + 0.1*Math.sqrt(Math.abs(x));
+  r += (20*Math.sin(6*x*PI) + 20*Math.sin(2*x*PI)) * 2/3;
+  r += (20*Math.sin(x*PI) + 40*Math.sin(x/3*PI)) * 2/3;
+  r += (150*Math.sin(x/12*PI) + 300*Math.sin(x/30*PI)) * 2/3;
+  return r;
+}
+function wgs2gcj(lat, lon){
+  if (outOfChina(lat, lon)) return { lat, lon };
+  let dLat = tLat(lon - 105, lat - 35), dLon = tLon(lon - 105, lat - 35);
+  const rad = lat / 180 * PI;
+  let m = Math.sin(rad); m = 1 - ECC*m*m;
+  const sm = Math.sqrt(m);
+  dLat = (dLat * 180) / ((AXIS * (1 - ECC)) / (m * sm) * PI);
+  dLon = (dLon * 180) / (AXIS / sm * Math.cos(rad) * PI);
+  return { lat: lat + dLat, lon: lon + dLon };
+}
+DATA.pois.forEach(p => { const g = wgs2gcj(p.lat, p.lon); p.glat = g.lat; p.glon = g.lon; });
+Object.keys(DATA.views).forEach(k => { const v = DATA.views[k]; const g = wgs2gcj(v.lat, v.lon); v.lat = g.lat; v.lon = g.lon; });
+
+/* ============ 地图引擎 ============ */
+const TILE_URLS = [
+  'https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+  'https://wprd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scl=1&style=7&x={x}&y={y}&z={z}',
+  'https://rt{s}.map.gtimg.com/tile?z={z}&x={x}&y={y}&styleid=3&version=1'
+];
+const GMap = {
+  box: null, world: null, svg: null, w: 0, h: 0,
+  center: { lat: 0, lon: 0 }, zf: 14,
+  scale: 1, baseZ: 14, tiles: new Map(), markers: new Map(),
+  okCount: 0, failCount: 0, offline: false, sel: null,
+  init(){
+    this.box = $('#map'); this.world = $('#world');
+    this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    this.world.appendChild(this.svg);
+    this.measure();
+    window.addEventListener('resize', () => { this.measure(); this.render(); });
+    this.bindGestures();
+    this.buildMarkers();
+  },
+  measure(){ const r = this.box.getBoundingClientRect(); this.w = r.width; this.h = r.height; },
+  proj(lat, lon, z){
+    const n = 256 * Math.pow(2, z);
+    const x = (lon + 180) / 360 * n;
+    const s = Math.sin(lat * PI / 180);
+    const y = (0.5 - Math.log((1 + s) / (1 - s)) / (4 * PI)) * n;
+    return { x, y };
+  },
+  setView(lat, lon, zf){ this.center = { lat, lon }; this.zf = zf; this.render(); },
+  centerOn(lat, lon, fracY){
+    const z = this.baseZ || 15, s = this.scale || 1;
+    const pt = this.proj(lat, lon, z);
+    const cy = pt.y + (0.5 - (fracY == null ? 0.3 : fracY)) * (this.h / s);
+    this.center = this.unproj(pt.x, cy, z);
+    this.render();
+  },
+  fit(ids, pad){
+    const ps = ids.map(i => BY_ID[i]).filter(Boolean);
+    if (!ps.length) return;
+    if (ps.length === 1){ const v = DATA.views[ps[0].view] || { z: 15 }; this.setView(ps[0].glat, ps[0].glon, Math.max(15, v.z)); return; }
+    const z = 13;
+    const pts = ps.map(p => this.proj(p.glat, p.glon, z));
+    const minX = Math.min(...pts.map(p => p.x)), maxX = Math.max(...pts.map(p => p.x));
+    const minY = Math.min(...pts.map(p => p.y)), maxY = Math.max(...pts.map(p => p.y));
+    const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+    const padF = pad == null ? 0.62 : pad;
+    const sx = (this.w * padF) / Math.max(60, maxX - minX);
+    const sy = (this.h * padF) / Math.max(60, maxY - minY);
+    let zf = z + Math.log2(Math.min(sx, sy));
+    zf = Math.max(11, Math.min(16.2, zf));
+    const c = this.unproj(cx, cy, z);
+    this.setView(c.lat, c.lon, zf);
+  },
+  unproj(x, y, z){
+    const n = 256 * Math.pow(2, z);
+    const lon = x / n * 360 - 180;
+    const lat = Math.atan(Math.sinh(PI * (1 - 2 * y / n))) * 180 / PI;
+    return { lat, lon };
+  },
+  buildMarkers(){
+    DATA.pois.forEach(p => {
+      const d = el('div', 'pin');
+      d.dataset.id = p.id;
+      const c = PIN_COLORS[p.kind] || '#c2410c';
+      d.innerHTML = '<div class="dot" style="background:' + c + '">' + p.n + '</div>' +
+                    '<div class="lbl">' + p.name.replace(/（.*?）/g, '') + '</div>';
+      d.addEventListener('click', e => { e.stopPropagation(); UI.select(p.id, true); });
+      this.world.appendChild(d);
+      this.markers.set(p.id, d);
+    });
+  },
+  render(){
+    const zf = this.zf, baseZ = Math.max(11, Math.min(17, Math.round(zf)));
+    const s = Math.pow(2, zf - baseZ);
+    this.baseZ = baseZ; this.scale = s;
+    const c = this.proj(this.center.lat, this.center.lon, baseZ);
+    this.world.style.transform = 'translate(' + (this.w / 2) + 'px,' + (this.h / 2) + 'px) scale(' + s + ') translate(' + (-c.x) + 'px,' + (-c.y) + 'px)';
+    this.renderTiles(baseZ, c, s);
+    this.markers.forEach((node, id) => {
+      const p = BY_ID[id];
+      const pt = this.proj(p.glat, p.glon, baseZ);
+      node.style.left = pt.x + 'px';
+      node.style.top = pt.y + 'px';
+      node.style.transform = 'translate(-50%,-100%) scale(' + (1 / s) + ')';
+      node.classList.toggle('sel', id === this.sel);
+    });
+    this._c = c;
+    this.layoutLabels(zf, baseZ);
+    this.renderRoutes(baseZ);
+  },
+  layoutLabels(zf, baseZ){
+    const key = zf.toFixed(2) + '|' + this.sel + '|' + this.w + 'x' + this.h + '|' + Math.round(this.center.lat * 1e4) + ',' + Math.round(this.center.lon * 1e4);
+    if (this._lblKey === key) return;
+    this._lblKey = key;
+    const show = zf >= 14.0;
+    const c = this._c || this.proj(this.center.lat, this.center.lon, baseZ);
+    const s = this.scale;
+    const PRI = { home: 0, exam: 0, metro: 1, tea: 1, scenic: 1, walk: 1 };
+    const ids = Array.from(this.markers.keys()).sort((a, b) => {
+      if (a === this.sel) return -1;
+      if (b === this.sel) return 1;
+      const pa = PRI[BY_ID[a].kind] == null ? 2 : PRI[BY_ID[a].kind];
+      const pb = PRI[BY_ID[b].kind] == null ? 2 : PRI[BY_ID[b].kind];
+      return pa - pb;
+    });
+    const overlap = (a, b) => !(a.x2 < b.x1 || a.x1 > b.x2 || a.y2 < b.y1 || a.y1 > b.y2);
+    const dots = {};
+    ids.forEach(id => {
+      const p = BY_ID[id];
+      const pt = this.proj(p.glat, p.glon, baseZ);
+      const sx = this.w / 2 + (pt.x - c.x) * s;
+      const sy = this.h / 2 + (pt.y - c.y) * s;
+      dots[id] = { x1: sx - 13, x2: sx + 13, y1: sy - 24, y2: sy + 1 };
+    });
+    const labels = [];
+    ids.forEach(id => {
+      const node = this.markers.get(id);
+      if (!show){ node.classList.remove('showlbl'); return; }
+      const p = BY_ID[id];
+      const pt = this.proj(p.glat, p.glon, baseZ);
+      const sx = this.w / 2 + (pt.x - c.x) * s;
+      const sy = this.h / 2 + (pt.y - c.y) * s;
+      const text = node.querySelector('.lbl').textContent;
+      let wpx = 16;
+      for (const ch of text) wpx += /[\u3000-\u9fff\uff00-\uffef]/.test(ch) ? 10.6 : 6.2;
+      const box = { x1: sx - wpx / 2, x2: sx + wpx / 2, y1: sy - 22, y2: sy - 3 };
+      let hit = labels.some(b => overlap(box, b));
+      if (!hit){
+        for (const k in dots){
+          if (k !== id && overlap(box, dots[k])){ hit = true; break; }
+        }
+      }
+      if (hit){ node.classList.remove('showlbl'); return; }
+      labels.push(box);
+      node.classList.add('showlbl');
+    });
+  },
+  renderTiles(z, c, s){
+    const halfW = this.w / 2 / s, halfH = this.h / 2 / s;
+    const x0 = Math.floor((c.x - halfW - 256) / 256), x1 = Math.floor((c.x + halfW + 256) / 256);
+    const y0 = Math.floor((c.y - halfH - 256) / 256), y1 = Math.floor((c.y + halfH + 256) / 256);
+    const max = Math.pow(2, z);
+    const need = new Set();
+    for (let x = x0; x <= x1; x++) for (let y = y0; y <= y1; y++){
+      if (y < 0 || y >= max) continue;
+      const wx = ((x % max) + max) % max;
+      const key = z + '/' + wx + '/' + y + '/' + x;
+      need.add(key);
+      if (this.tiles.has(key)) continue;
+      const img = new Image();
+      img.className = 'tile';
+      img.decoding = 'async';
+      img.style.left = (x * 256) + 'px';
+      img.style.top = (y * 256) + 'px';
+      const tpl = TILE_URLS[0].replace('{s}', String((Math.abs(x + y) % 4) + 1))
+        .replace('{x}', wx).replace('{y}', y).replace('{z}', z);
+      img.src = tpl;
+      img.onload = () => { this.okCount++; this.world.insertBefore(img, this.svg); this.checkOffline(); };
+      img.onerror = () => { this.failCount++; img.remove(); this.checkOffline(); };
+      this.tiles.set(key, img);
+    }
+    this.tiles.forEach((img, key) => {
+      if (!need.has(key)) { img.remove(); this.tiles.delete(key); }
+    });
+  },
+  checkOffline(){
+    const total = this.okCount + this.failCount;
+    if (this.offline) return;
+    if (this.failCount >= 8 && this.okCount === 0){ this.goOffline(); return; }
+    if (total >= 14 && this.failCount / total > 0.55) this.goOffline();
+  },
+  goOffline(){
+    this.offline = true;
+    this.tiles.forEach(img => img.remove());
+    this.tiles.clear();
+    $('#offline').classList.add('on');
+    status('网络不可用 · 已切示意图');
+  },
+  renderRoutes(z){
+    const ns = 'http://www.w3.org/2000/svg';
+    this.svg.innerHTML = '';
+    let minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9, any = false;
+    DATA.routes.forEach(r => {
+      const stops = r.stops.map(id => BY_ID[id]).filter(Boolean);
+      if (stops.length < 2) return;
+      const pts = stops.map(p => this.proj(p.glat, p.glon, z));
+      if (r.onlyWhenVisible && this._c){
+        const halfW = this.w / 2 / this.scale * 0.92, halfH = this.h / 2 / this.scale * 0.92;
+        const inside = pts.every(p => Math.abs(p.x - this._c.x) < halfW && Math.abs(p.y - this._c.y) < halfH);
+        if (!inside) return;
+      }
+      pts.forEach(p => {
+        minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
+        minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y); any = true;
+      });
+      const d = pts.map((p, i) => (i ? 'L' : 'M') + p.x + ' ' + p.y).join(' ');
+      const path = document.createElementNS(ns, 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', r.color);
+      path.setAttribute('stroke-width', r.solid ? 4 : 3.2);
+      path.setAttribute('stroke-linecap', 'round');
+      path.setAttribute('stroke-linejoin', 'round');
+      path.setAttribute('opacity', r.id === 'metro6' ? '0.55' : '0.85');
+      path.setAttribute('vector-effect', 'non-scaling-stroke');
+      if (!r.solid) path.setAttribute('stroke-dasharray', '1 7');
+      this.svg.appendChild(path);
+    });
+    if (any){
+      const pad = 40;
+      const x = minX - pad, y = minY - pad, w = (maxX - minX) + pad * 2, h = (maxY - minY) + pad * 2;
+      this.svg.setAttribute('viewBox', x + ' ' + y + ' ' + w + ' ' + h);
+      this.svg.style.left = x + 'px';
+      this.svg.style.top = y + 'px';
+      this.svg.style.width = w + 'px';
+      this.svg.style.height = h + 'px';
+    }
+  },
+  bindGestures(){
+    const box = this.box;
+    let dragging = false, moved = 0, last = null, pinch = null, lastDist = 0;
+    const pointers = new Map();
+    const pts = () => Array.from(pointers.values());
+    // 关键：pointerdown 里立刻 setPointerCapture 会把后续 click 也重定向到 #map，
+    // 导致 pin / 顶栏 chip / 弹层里的「高德导航」链接全都点不动（点了没详情就是这么来的）。
+    // 改成「动了才捕获」：单指轻点不捕获，click 正常落到 pin；拖拽超过 8px 再捕获。
+    const captured = new Set();
+    const grab = pid => {
+      if (pid == null || captured.has(pid)) return;
+      try { box.setPointerCapture(pid); captured.add(pid); } catch(_){}
+    };
+    box.addEventListener('pointerdown', e => {
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pointers.size === 1){ dragging = true; moved = 0; last = { x: e.clientX, y: e.clientY }; }
+      else if (pointers.size === 2){
+        dragging = false; const [a, b] = pts(); lastDist = Math.hypot(a.x - b.x, a.y - b.y);
+        pointers.forEach((_, pid) => grab(pid));   // 双指缩放必须捕获，否则手指移出地图就断
+      }
+    });
+    box.addEventListener('pointermove', e => {
+      if (!pointers.has(e.pointerId)) return;
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pointers.size === 1 && dragging){
+        const dx = e.clientX - last.x, dy = e.clientY - last.y;
+        moved += Math.abs(dx) + Math.abs(dy);
+        last = { x: e.clientX, y: e.clientY };
+        if (moved > 8) grab(e.pointerId);
+        const c = this.proj(this.center.lat, this.center.lon, this.baseZ);
+        const nc = this.unproj(c.x - dx / this.scale, c.y - dy / this.scale, this.baseZ);
+        this.center = nc;
+        this.render();
+      } else if (pointers.size === 2){
+        const [a, b] = pts();
+        const dist = Math.hypot(a.x - b.x, a.y - b.y);
+        if (lastDist > 0){
+          const ratio = dist / lastDist;
+          this.zf = Math.max(11, Math.min(17, this.zf + Math.log2(ratio)));
+          this.render();
+        }
+        lastDist = dist;
+      }
+    });
+    const up = e => {
+      // 兜底：某些手机浏览器（含被“简化/受限”的内置浏览器）手指轻点后不一定合成 click，
+      // 所以这里自己做一次轻点识别 —— 命中 pin 就直接开详情，命中 chip/链接则什么都不做，交给原生 click。
+      const tapLike = pointers.size === 1 && moved < 8 && !captured.has(e.pointerId) && e.pointerType !== 'mouse';
+      if (tapLike){
+        const hit = document.elementFromPoint(e.clientX, e.clientY);
+        const pinEl = hit && hit.closest ? hit.closest('.pin') : null;
+        if (pinEl && pinEl.dataset.id) UI.select(pinEl.dataset.id, true);
+      }
+      pointers.delete(e.pointerId);
+      if (pointers.size === 0){ dragging = false; lastDist = 0; }
+      if (pointers.size < 2) lastDist = 0;
+    };
+    box.addEventListener('pointerup', up);
+    box.addEventListener('pointercancel', up);
+    box.addEventListener('pointerleave', up);
+    box.addEventListener('wheel', e => { e.preventDefault(); this.zf = Math.max(11, Math.min(17, this.zf - e.deltaY * 0.0022)); this.render(); }, { passive: false });
+    box.addEventListener('dblclick', e => { this.zf = Math.min(17, this.zf + 0.9); this.render(); });
+  }
+};
+
+let statusTimer = null;
+function status(msg){
+  const t = $('#mapStatus'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(statusTimer); statusTimer = setTimeout(() => t.classList.remove('on'), 2600);
+}
+
+/* ============ 深链 ============ */
+function navUrl(p){
+  const name = encodeURIComponent(p.name.replace(/（.*?）/g, '').split(' · ')[0]);
+  return 'https://uri.amap.com/marker?position=' + p.glon.toFixed(6) + ',' + p.glat.toFixed(6) +
+         '&name=' + name + '&src=guide&coordinate=gaode&callnative=0';
+}
+function searchUrl(p){
+  return 'https://uri.amap.com/search?keyword=' + encodeURIComponent(p.name.replace(/（.*?）/g, '').split(' · ')[0]) + '&city=广州&src=guide';
+}
+
+/* ============ UI ============ */
+const UI = {
+  tab: 'map',
+  checks: {},
+  init(){
+    try { this.checks = JSON.parse(localStorage.getItem('gz-guide-checks') || '{}'); } catch(e){ this.checks = {}; }
+    this.buildChips(); this.buildChecklist(); this.buildDays(); this.buildTips(); this.renderDiagram($('#diagramPlan'));
+    const off = $('#offline');
+    off.innerHTML = '<div class="offline-h"><b>路线示意图</b><span>在线地图没加载出来，用这张图也够用</span></div><div id="offlineDiagram"></div>';
+    this.renderDiagram($('#offlineDiagram'));
+    this.bindTabs(); this.bindSheet(); this.setTab('map');
+    const v = DATA.views.oldtown; GMap.setView(v.lat, v.lon, v.z);
+    this.markToday();
+  },
+  bindTabs(){
+    $$('.tabbar button').forEach(b => b.addEventListener('click', () => this.setTab(b.dataset.tab)));
+  },
+  setTab(t){
+    this.tab = t;
+    $$('.tabbar button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+    $$('.pane').forEach(p => p.classList.toggle('on', p.id === 'pane-' + t));
+    if (t === 'map'){ GMap.measure(); GMap.render(); }
+    else this.closeSheet();
+  },
+  buildChips(){
+    const wrap = $('#mapChips');
+    const items = [{ id: 'oldtown', label: '老西关 · 北京路' }, { id: 'kxc', label: '科学城 · 考场' }]
+      .concat(DATA.routes.filter(r => r.id !== 'metro6').map(r => ({ id: 'route:' + r.id, label: r.name })));
+    items.forEach((it, i) => {
+      const b = el('button', 'chip' + (i === 0 ? ' on' : ''), it.label);
+      b.addEventListener('click', () => {
+        $$('.chip', wrap).forEach(c => c.classList.remove('on'));
+        b.classList.add('on');
+        if (it.id.startsWith('route:')){
+          const r = DATA.routes.find(x => x.id === it.id.slice(6));
+          GMap.fit(r.stops, 0.58);
+        } else {
+          const v = DATA.views[it.id];
+          GMap.setView(v.lat, v.lon, v.z);
+        }
+      });
+      wrap.appendChild(b);
+    });
+    const all = el('button', 'chip', '全部点位');
+    all.addEventListener('click', () => {
+      $$('.chip', wrap).forEach(c => c.classList.remove('on')); all.classList.add('on');
+      GMap.fit(DATA.pois.filter(p => p.view === 'oldtown').map(p => p.id), 0.55);
+    });
+    wrap.appendChild(all);
+  },
+  buildChecklist(){
+    const wrap = $('#listWrap');
+    let all = 0, done = 0;
+    DATA.lists.forEach(g => {
+      const box = el('div', 'group');
+      box.appendChild(el('div', 'group-h', '<span class="ico">' + (g.icon || '·') + '</span>' + g.title));
+      g.items.forEach(it => {
+        all++;
+        const on = !!this.checks[it.id];
+        if (on) done++;
+        const b = el('button', 'check' + (on ? ' done' : ''));
+        b.innerHTML = '<span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6.5"/></svg></span>' +
+          '<span class="txt"><span class="t">' + it.t + '</span>' +
+          (it.poi && BY_ID[it.poi] ? '<span class="s">' + kindLabel(BY_ID[it.poi]) + ' · 在地图上第 ' + BY_ID[it.poi].n + ' 号</span>' : '') +
+          '</span>';
+        if (it.poi && BY_ID[it.poi]){
+          const m = el('span', 'mini', '地图');
+          m.addEventListener('click', ev => { ev.stopPropagation(); this.goPoi(it.poi); });
+          b.appendChild(m);
+        }
+        b.addEventListener('click', () => {
+          this.checks[it.id] = !this.checks[it.id];
+          b.classList.toggle('done', !!this.checks[it.id]);
+          try { localStorage.setItem('gz-guide-checks', JSON.stringify(this.checks)); } catch(e){}
+          this.countProgress();
+          if (this.checks[it.id]) toast('打卡 +1');
+        });
+        box.appendChild(b);
+      });
+      wrap.appendChild(box);
+    });
+    $('#cAll').textContent = all; $('#cDone').textContent = done;
+    this.countProgress();
+  },
+  countProgress(){
+    let all = 0, done = 0;
+    DATA.lists.forEach(g => g.items.forEach(it => { all++; if (this.checks[it.id]) done++; }));
+    $('#cDone').textContent = done; $('#cAll').textContent = all;
+    $('#barFill').style.width = (all ? (done / all * 100) : 0) + '%';
+  },
+  buildDays(){
+    const wrap = $('#days');
+    const today = todayStr();
+    DATA.itinerary.forEach((d, i) => {
+      const state = d.date < today ? 'past' : (d.date === today ? 'now' : '');
+      const day = el('div', 'day ' + state);
+      const [y, m, dd] = d.date.split('-');
+      day.innerHTML =
+        '<div class="day-rail"><div class="day-date">' + Number(m) + '/' + Number(dd) + '</div><div class="day-w">' + d.w + '</div><div class="day-line"></div></div>' +
+        '<div class="day-body"><div class="day-card"><h3>' + d.title +
+          (d.date === today ? '<span class="now-badge">今天</span>' : '') +
+          (d.tag ? '<span class="day-tag">' + d.tag + '</span>' : '') + '</h3>' +
+          '<p>' + d.plan + '</p>' +
+          (d.alert ? '<div class="alert">' + d.alert + '</div>' : '') +
+          (d.route ? '<div><button class="route-btn" data-route="' + d.route + '">看这条路线 →</button></div>' : '') +
+        '</div></div>';
+      const rb = $('[data-route]', day);
+      if (rb) rb.addEventListener('click', () => { this.setTab('map'); const r = DATA.routes.find(x => x.id === rb.dataset.route); GMap.fit(r.stops, 0.55); window.setTimeout(() => status(r.label), 260); });
+      wrap.appendChild(day);
+    });
+    const btn = $('#planMapBtn');
+    if (btn) btn.addEventListener('click', () => { this.setTab('map'); GMap.fit(DATA.pois.filter(p => p.view === 'oldtown').map(p => p.id), 0.55); });
+  },
+  buildTips(){
+    const wrap = $('#tips');
+    DATA.notes.forEach((n, i) => {
+      const acc = el('div', 'acc' + (i === 0 ? ' open' : ''));
+      acc.innerHTML = '<button class="acc-h">' + n.title + '<span class="chev">▾</span></button>' +
+        '<div class="acc-b"><ul>' + n.items.map(t => '<li>' + t + '</li>').join('') + '</ul></div>';
+      $('.acc-h', acc).addEventListener('click', () => acc.classList.toggle('open'));
+      wrap.appendChild(acc);
+    });
+  },
+  renderDiagram(host){
+    if (!host) return;
+    host.innerHTML = '';
+    DATA.schematic.groups.forEach((g, gi) => {
+      if (gi === 1){
+        host.appendChild(el('div', 'dlink', '<div class="dash"></div><span>' + DATA.schematic.link.label + '</span><div class="dash"></div>'));
+      }
+      const box = el('div', 'dgroup');
+      box.innerHTML = '<h4><i style="background:' + g.color + '"></i>' + g.title + '</h4><div class="ditems">' +
+        g.items.map(id => { const p = BY_ID[id]; if (!p) return ''; return '<span class="ditem"><span class="n" style="background:' + (PIN_COLORS[p.kind] || '#c2410c') + '">' + p.n + '</span>' + p.name.replace(/（.*?）/g, '') + '</span>'; }).join('') +
+        '</div>';
+      host.appendChild(box);
+    });
+    host.appendChild(el('div', 'diagram-hint', DATA.meta.coordNote));
+  },
+  goPoi(id){
+    const p = BY_ID[id];
+    if (!p) return;
+    this.setTab('map');
+    const v = DATA.views[p.view] || { z: 15 };
+    GMap.setView(p.glat, p.glon, Math.max(15.4, v.z));
+    window.setTimeout(() => this.select(id, true), 120);
+  },
+  bindSheet(){
+    $('#scrim').addEventListener('click', () => this.closeSheet());
+  },
+  select(id, open){
+    const p = BY_ID[id];
+    if (!p) return;
+    GMap.sel = id;
+    GMap.centerOn(p.glat, p.glon, 0.3);
+    const c = PIN_COLORS[p.kind] || '#c2410c';
+    const rows = [];
+    if (p.addr) rows.push(['地址', p.addr]);
+    if (p.price) rows.push(['价位', p.price]);
+    if (p.when) rows.push(['时间', p.when]);
+    const tags = [kindLabel(p), p.tag].filter(Boolean);
+    const tagline = tags.filter((v, i) => tags.indexOf(v) === i).join(' · ');
+    const html =
+      '<div class="sheet-h"><span class="no" style="background:' + c + '">' + p.n + '</span><h3>' + p.name + '</h3></div>' +
+      '<div class="tagline">' + tagline + '</div>' +
+      (p.desc ? '<div class="desc">' + p.desc + '</div>' : '') +
+      (p.items && p.items.length ? '<div class="items">' + p.items.map(i => '<b>' + i + '</b>').join('') + '</div>' : '') +
+      (rows.length ? '<div class="rows">' + rows.map(r => '<div class="row"><span class="k">' + r[0] + '</span><span>' + r[1] + '</span></div>').join('') + '</div>' : '') +
+      (p.note ? '<div class="note">' + p.note + '</div>' : '') +
+      '<div class="acts">' +
+        '<a class="btn primary" href="' + navUrl(p) + '" target="_blank" rel="noopener">高德导航</a>' +
+        '<a class="btn ghost" href="' + searchUrl(p) + '" target="_blank" rel="noopener">搜索这家店</a>' +
+      '</div>';
+    $('#sheetIn').innerHTML = html;
+    $('#sheet').classList.add('on');
+    $('#scrim').classList.add('on');
+  },
+  closeSheet(){
+    $('#sheet').classList.remove('on');
+    $('#scrim').classList.remove('on');
+    GMap.sel = null; GMap.render();
+  },
+  markToday(){
+    const today = todayStr();
+    const d = DATA.itinerary.find(x => x.date === today);
+    const chip = $('#todayChip');
+    if (d) chip.textContent = '今天 ' + Number(d.date.slice(5, 7)) + '/' + Number(d.date.slice(8)) + ' · ' + d.title;
+    else chip.textContent = '攻略有效期 10/28 – 11/4';
+  }
+};
+function kindLabel(p){
+  // 只返回「类目」，标签由 tagline 统一拼，避免出现「地铁站 · 6 号线终点 · 6 号线终点」这种重复
+  return KIND_ZH[p.kind] || '地点';
+}
+function todayStr(){
+  const d = new Date();
+  const p = n => (n < 10 ? '0' + n : '' + n);
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+}
+let toastT = null;
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 1600);
+}
+
+/* ============ 启动 ============ */
+if (location.hash === '#long') document.body.classList.add('long');
+GMap.init();
+UI.init();
+</script>
+</body>
+</html>
